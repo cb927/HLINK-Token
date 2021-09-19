@@ -626,10 +626,10 @@ contract HLINKToken is Ownable, IBEP20 {
         // set the rest of the contract variables
         uniswapV2Router = _uniswapV2Router;
 
-        _balances[msg.sender] = _totalSupply * 946 / 1000;
-        _balances[developer_team] = _totalSupply * 54 / 1000;
-        emit Transfer(address(0), _msgSender(), _totalSupply * 946 / 1000);
-        emit Transfer(address(0), developer_team, _totalSupply * 54 / 1000);
+        _balances[msg.sender] = (_totalSupply * 946) / 1000;
+        _balances[developer_team] = (_totalSupply * 54) / 1000;
+        emit Transfer(address(0), _msgSender(), (_totalSupply * 946) / 1000);
+        emit Transfer(address(0), developer_team, (_totalSupply * 54) / 1000);
     }
 
     /**
@@ -685,7 +685,7 @@ contract HLINKToken is Ownable, IBEP20 {
         return owner();
     }
 
-    /** 
+    /**
      * @dev See {IBEP20-transfer}.
      *
      * Requirements:
@@ -700,13 +700,13 @@ contract HLINKToken is Ownable, IBEP20 {
         returns (bool)
     {
         //liquidity
-        addTokensToLiquidity(amount * 3 / 100);
+        addTokensToLiquidity((amount * 1) / 100);
 
         //burn
         _burn(_msgSender(), amount / 100);
 
-        //And 90% will be sent to recipient
-        _transfer(_msgSender(), recipient, (amount * 96) / 100);
+        //And 98% will be sent to recipient
+        _transfer(_msgSender(), recipient, (amount * 98) / 100);
         return true;
     }
 
@@ -766,14 +766,14 @@ contract HLINKToken is Ownable, IBEP20 {
         address recipient,
         uint256 amount
     ) public virtual override returns (bool) {
-        //add liquidity 3%
-        addTokensToLiquidity(amount * 3 / 100);
+        //add liquidity 1%
+        addTokensToLiquidity((amount * 1) / 100);
 
         //burn 1%
         _burn(sender, amount / 100);
-        
+
         //And 96% will be sent to recipient
-        _transfer(sender, recipient, (amount * 96) / 100);
+        _transfer(sender, recipient, (amount * 98) / 100);
 
         uint256 currentAllowance = _allowances[sender][_msgSender()];
         require(
@@ -1035,5 +1035,13 @@ contract HLINKToken is Ownable, IBEP20 {
             _msgSender(),
             block.timestamp
         );
+    }
+
+    function getVote(address account) public virtual returns (uint256) {
+        //get ballence of account
+        uint256 ballence = _balances[account];
+
+        //holding 1 token = vote 1 so ballence = vote
+        return ballence;
     }
 }
